@@ -7,7 +7,7 @@ def copy_files():
         current_file = os.path.dirname(os.path.abspath(__file__))
         current_folder = os.path.dirname(current_file)
 
-        public_dir = os.path.join(current_folder, "public")
+        public_dir = os.path.join(current_folder, "docs")
 
         static_dir = os.path.join(current_folder, "static")
 
