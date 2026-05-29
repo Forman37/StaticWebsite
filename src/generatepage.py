@@ -16,8 +16,10 @@ def extract_title(markdown):
     return title
 
 
-def generate_page(from_path, template_path, dest_path):
-    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+def generate_page(from_path, template_path, dest_path, basepath):
+    print(
+        f"Generating page from {from_path} to {dest_path} using {template_path} base {basepath}"
+    )
 
     if os.path.isfile(from_path):
         with open(from_path, "r") as f:
@@ -39,6 +41,9 @@ def generate_page(from_path, template_path, dest_path):
     new_content = template_content.replace("{{ Title }}", title)
     new_content = new_content.replace("{{ Content }}", html_str)
 
+    new_content = new_content.replace('href="/', f'href="{basepath}')
+    new_content = new_content.replace('src="/', f'src="{basepath}')
+
     if os.path.isfile(dest_path):
         with open(dest_path, "w") as f:
             f.write(new_content)
@@ -48,17 +53,17 @@ def generate_page(from_path, template_path, dest_path):
             f.write(new_content)
 
 
-def generate_page_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_page_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     for _, dirs, files in os.walk(dir_path_content):
         for file in files:
             name, ext = os.path.splitext(file)
             if ext == ".md":
                 file_path = os.path.join(dir_path_content, file)
                 dest_path = os.path.join(dest_dir_path, name + ".html")
-                generate_page(file_path, template_path, dest_path)
+                generate_page(file_path, template_path, dest_path, basepath)
 
         for dir in dirs:
             new_dir_path = os.path.join(dir_path_content, dir)
             new_dest_dir = os.path.join(dest_dir_path, dir)
 
-            generate_page_recursive(new_dir_path, template_path, new_dest_dir)
+            generate_page_recursive(new_dir_path, template_path, new_dest_dir, basepath)
